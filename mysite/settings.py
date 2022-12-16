@@ -34,6 +34,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'registry.apps.RegistryConfig',
+    'rsvp.apps.RsvpConfig',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
