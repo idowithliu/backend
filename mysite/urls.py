@@ -18,13 +18,21 @@ from rest_framework import routers
 from django.urls import include, path
 from polls import views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 #router = routers.DefaultRouter()
 #router.register(r'users', views.UserViewSet)
 #router.register(r'groups', views.GroupViewSet)
 
+admin.site.site_header = "I Do With Liu Administration"
+admin.site.site_title = "I Do With Liu Administration"
+admin.site.index_title = "I Do With Liu Administration"
+
 urlpatterns = [
     #path('/', include(router.urls)),
     path("polls/", include('polls.urls')),
+    path("registry/", include('registry.urls')),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
