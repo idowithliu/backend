@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from rest_framework import routers
 from django.urls import include, path
-from polls import views
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -31,9 +30,8 @@ admin.site.index_title = "I Do With Liu Administration"
 
 urlpatterns = [
     #path('/', include(router.urls)),
-    path("polls/", include('polls.urls')),
-    path("registry/", include('registry.urls')),
-    path("invites/", include('rsvp.urls')),
+    path("api/registry/", include('registry.urls')),
+    path("api/invites/", include('rsvp.urls')),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

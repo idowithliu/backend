@@ -9,5 +9,6 @@ from . import views
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('claim/', views.claim, name="claim"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
