@@ -1,2 +1,7 @@
 venv/
 *.sqlite3
+registry/migrations
+rsvp/migrations
+mysite/__pycache__
+registry/__pycache__
+rsvp/__pycache__
