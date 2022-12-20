@@ -5,9 +5,9 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'invites', views.InviteViewSet)
 
-from . import views
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('rsvp/', views.submit_rsvp),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

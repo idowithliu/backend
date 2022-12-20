@@ -7,7 +7,7 @@ from .models import Invite, Guest
 class GuestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest
-        fields = ['name', 'dietary_restrictions', 'is_attending']
+        fields = ['name', 'id', 'dietary_restrictions', 'is_attending']
 
 
 class InviteSerializer(serializers.HyperlinkedModelSerializer):

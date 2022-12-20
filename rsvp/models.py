@@ -25,6 +25,7 @@ class Guest(models.Model):
     invite = models.ForeignKey(
         Invite, related_name="guests", on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    id = models.AutoField(primary_key=True)
     dietary_restrictions = models.CharField(
         null=True, blank=True, max_length=200)
     is_attending = models.BooleanField(

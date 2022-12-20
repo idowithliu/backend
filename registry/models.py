@@ -25,6 +25,7 @@ class RegistryItem(models.Model):
         verbose_name="Featured image", blank=True, null=True)
 
     claimer = models.CharField(max_length=200, blank=True, null=True)
+    claimer_id = models.IntegerField(blank=True, null=True)
 
     registry = models.ForeignKey(
         Registry, related_name="registry_items", on_delete=models.CASCADE)
