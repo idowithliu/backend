@@ -20,6 +20,9 @@ class Invite(models.Model):
             self.invite_url = f"https://idowithliu.com/rsvp?userID={self.uuid}"
         super(Invite, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return f"/rsvp?userID={self.uuid}"
+
 
 class Guest(models.Model):
     invite = models.ForeignKey(

@@ -11,6 +11,7 @@ class InviteAdmin(admin.ModelAdmin):
     inlines = [GuestInline]
     list_display = ("family_name", "invite_url", "finished",)
     exclude = ("invite_url", "finished",)
+    view_on_site = True
 
 
 # Register your models here.
