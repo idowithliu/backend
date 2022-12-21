@@ -15,6 +15,9 @@ class Registry(models.Model):
     class Meta:
         verbose_name_plural = "Registries"
 
+    def get_absolute_url(self):
+        return f"/registry"
+
 
 class RegistryItem(models.Model):
     name = models.CharField(max_length=200)

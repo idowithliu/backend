@@ -10,6 +10,7 @@ class RegistryItemInline(admin.TabularInline):
 class RegistryAdmin(admin.ModelAdmin):
     inlines = [RegistryItemInline]
     list_display = ('name', 'visible',)
+    view_on_site = True
 
 
 # Register your models here.

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rsvp.apps.RsvpConfig',
 
     'django.contrib.admin',
+    'django.contrib.sites',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
