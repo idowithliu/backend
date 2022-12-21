@@ -147,7 +147,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 try:
     from core.config import *
 except ImportError:
-    print("Please create a core/config.py file to override values in settings.py")
+    raise ImportError(
+        "Please create a core/config.py file to override values in settings.py")
 
 if SECRET_KEY == "Change me":
     raise TypeError(
