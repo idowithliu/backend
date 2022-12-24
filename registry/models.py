@@ -1,4 +1,5 @@
 from django.db import models
+from rsvp.models import Guest
 
 # Create your models here.
 
@@ -27,8 +28,8 @@ class RegistryItem(models.Model):
     picture = models.ImageField(
         verbose_name="Featured image", blank=True, null=True)
 
-    claimer = models.CharField(max_length=200, blank=True, null=True)
-    claimer_id = models.IntegerField(blank=True, null=True)
+    claimer = models.OneToOneField(
+        Guest, on_delete=models.CASCADE, null=True, blank=True)
 
     registry = models.ForeignKey(
         Registry, related_name="registry_items", on_delete=models.CASCADE)
