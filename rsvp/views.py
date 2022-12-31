@@ -17,7 +17,6 @@ class InviteViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
 @csrf_exempt
 def submit_rsvp(request):
-    raise Exception()
     if request.method != "POST":
         response = {"status": "error", "message": "Method not allowed"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=405)

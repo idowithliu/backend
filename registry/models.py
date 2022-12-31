@@ -34,4 +34,4 @@ class RegistryItem(models.Model):
         Registry, related_name="registry_items", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name+a
+        return self.name
