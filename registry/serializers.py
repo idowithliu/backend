@@ -7,7 +7,7 @@ from .models import Registry, RegistryItem
 class RegistryItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegistryItem
-        fields = ['name', 'id', 'price', 'picture', 'claimer_id']
+        fields = ['name', 'url', 'id', 'price', 'claimer_id']
 
 
 class RegistrySerializer(serializers.HyperlinkedModelSerializer):

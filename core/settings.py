@@ -37,6 +37,8 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
+    'discord_integration',
+
     'registry.apps.RegistryConfig',
     'rsvp.apps.RsvpConfig',
 
@@ -49,6 +51,31 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'discord_integration': {
+            'level': 'ERROR',
+            'class': 'discord_integration.log.DiscordMessageHandler',
+            # OPTIONAL: specify a name to use a different integration configuration.
+            'model_name': 'default',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'discord_integration': {
+            'handlers': ['discord_integration', ],
+        }
+    },
+    'root': {
+        'handlers': ['discord_integration'],
+        'level': 'WARNING',
+    },
+}
 
 SITE_ID = 1
 

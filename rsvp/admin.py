@@ -9,7 +9,7 @@ class GuestInline(admin.TabularInline):
 
 class InviteAdmin(admin.ModelAdmin):
     inlines = [GuestInline]
-    list_display = ("family_name", "invite_url", "finished",)
+    list_display = ("family_name", "finished", "invite_url", "email",)
     exclude = ("invite_url", "finished",)
     view_on_site = True
 

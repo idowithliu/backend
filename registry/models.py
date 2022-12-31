@@ -23,16 +23,15 @@ class Registry(models.Model):
 class RegistryItem(models.Model):
     name = models.CharField(max_length=200)
     id = models.AutoField(primary_key=True, unique=True)
+    url = models.URLField(verbose_name="Link to Purchasing Site")
 
     price = models.IntegerField(blank=True, null=True)
-    picture = models.ImageField(
-        verbose_name="Featured image", blank=True, null=True)
 
-    claimer = models.OneToOneField(
-        Guest, on_delete=models.CASCADE, null=True, blank=True)
+    claimer = models.ForeignKey(
+        Guest, related_name="claimed_items", on_delete=models.CASCADE, null=True, blank=True)
 
     registry = models.ForeignKey(
         Registry, related_name="registry_items", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.name+a

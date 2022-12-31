@@ -4,7 +4,7 @@ from .models import Registry, RegistryItem
 
 class RegistryItemInline(admin.TabularInline):
     model = RegistryItem
-    fields = ('name', 'claimer', 'id')
+    fields = ('name', 'url', 'claimer', 'id')
 
 
 class RegistryAdmin(admin.ModelAdmin):

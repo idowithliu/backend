@@ -8,6 +8,7 @@ class Invite(models.Model):
     family_name = models.CharField(max_length=200)
     uuid = models.UUIDField(primary_key=True, editable=False, unique=True)
     invite_url = models.URLField(verbose_name="Unique RSVP Link")
+    email = models.EmailField(verbose_name="Email Address")
     finished = models.BooleanField(
         verbose_name="Has Completed RSVP", default=False)
 
