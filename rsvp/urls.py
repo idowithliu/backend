@@ -9,5 +9,6 @@ router.register(r'invites', views.InviteViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('rsvp/', views.submit_rsvp),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('send-emails/', views.send_emails),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
