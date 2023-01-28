@@ -5,6 +5,9 @@ django-cors-headers==3.13.0
 django-discord-integration==1.1.0
 django-rest-framework==0.1.0
 djangorestframework==3.14.0
+djangorestframework-jwt==1.11.0
+djangorestframework-simplejwt==5.2.2
 gunicorn==20.1.0
+PyJWT==1.7.1
 pytz==2022.6
 sqlparse==0.4.3
