@@ -129,3 +129,62 @@ def send_emails(request):
     response = {"status": "ok",
                 "message": f"Successfully sent {invites.__len__()} emails!"}
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)
+
+
+@csrf_exempt
+def test_email(request):
+    if request.method != "POST":
+        response = {"status": "error", "message": "Method not allowed"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=405)
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    if not "username" in body or not "password" in body:
+        response = {"status": "error",
+                    "message": "Username or password was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    user = User.objects.filter(username=body['username']).first()
+
+    if not user:
+        response = {"status": "error",
+                    "message": "a user with this username was not found"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=404)
+
+    if not user.check_password(body['password']):
+        response = {"status": "error",
+                    "message": "the password provided was not correct"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=401)
+
+    if not user.has_perms(["superuser"]):
+        response = {"status": "error",
+                    "message": "the user does not have superuser permissions"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=401)
+
+    if not "email_content" in body:
+        response = {"status": "error",
+                    "message": "an email body was not provided as \"email_content\""}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    if not "subject" in body:
+        response = {"status": "error",
+                    "message": "an email subject was not provided as \"subject\""}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    content: str = body['email_content']
+
+    client = EmailClient()
+    invite = Invite.objects.first()
+
+    if not invite:
+        response = {"status": "error",
+                    "message": "there are no invitations in the database yet"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=404)
+
+    client.send_email(
+        client.sender, body['subject'], content.format(**invite.__dict__))
+
+    response = {"status": "ok",
+                "message": f"Successfully sent test email!"}
+    return HttpResponse(json.dumps(response), content_type="application/json", status=200)
