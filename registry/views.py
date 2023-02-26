@@ -6,14 +6,19 @@ import json
 
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, mixins
-from registry.serializers import RegistrySerializer
-from .models import Registry, RegistryItem
-from rsvp.models import Guest
+from registry.serializers import RegistrySerializer, FundSerializer
+from .models import Registry, RegistryItem, Fund
+from rsvp.models import Invite, Guest
 
 
 class RegistryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Registry.objects.filter(visible=True).order_by('name')
     serializer_class = RegistrySerializer
+
+
+class FundViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Fund.objects.order_by('name')
+    serializer_class = FundSerializer
 
 
 @csrf_exempt
@@ -31,17 +36,17 @@ def claim(request):
         response = {"status": "error",
                     "message": "a registry item ID was not provided"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=400)
-    if not "claimer_id" in body or not body['claimer_id']:
-        response = {"status": "error",
-                    "message": "a claimer ID was not provided"}
-        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+    # if not "claimer_id" in body or not body['claimer_id']:
+    #     response = {"status": "error",
+    #                 "message": "a claimer ID was not provided"}
+    #     return HttpResponse(json.dumps(response), content_type="application/json", status=400)
     registry_item = RegistryItem.objects.filter(id=body['id']).first()
     if not registry_item or not registry_item.registry.visible:
         response = {"status": "error",
                     "message": "a registry item with this ID was not found"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=404)
 
-    new_claimer = Guest.objects.filter(id=body['claimer_id']).first()
+    new_claimer = Invite.objects.filter(uuid=body['uuid']).first()
     if not new_claimer:
         response = {"status": "error",
                     "message": f"a guest with ID {body['claimer_id']} was not found"}
@@ -49,11 +54,26 @@ def claim(request):
 
     if (not registry_item.claimer_id is None) and new_claimer.invite.uuid != body['uuid']:
         response = {"status": "error",
-                    "message": "this registry item has already been claimed by another person"}
+                    "message": "this registry item has already been claimed by another party"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=400)
 
     registry_item.claimer = new_claimer
     registry_item.save()
     response = {"status": "ok",
                 "message": "the registry item was successfully claimed!"}
+    return HttpResponse(json.dumps(response), content_type="application/json", status=200)
+
+
+def funds_progress(request):
+    if request.method != "GET":
+        response = {"status": "error", "message": "Method not allowed"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=405)
+
+    total = 0
+    for invite in Invite.objects.all():
+        if hasattr(invite, "funds"):
+            total += invite.funds.amount
+
+    response = {"status": "ok",
+                "total": total}
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)

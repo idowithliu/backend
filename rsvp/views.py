@@ -2,6 +2,8 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+#from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
+
 from .emails.main import EmailClient
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -188,3 +190,10 @@ def test_email(request):
     response = {"status": "ok",
                 "message": f"Successfully sent test email!"}
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)
+
+
+def test(request):
+    data = {'token': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1NjE5Njc2LCJpYXQiOjE2NzU2MTkzNzYsImp0aSI6ImVmNWM1NjdhZjMzNzQ4OTM4YWZmNTA1Nzg4ZDczMjE3IiwidXNlcl9pZCI6MX0.Q-ThCR6lBAegbkD-bbzJMakqENA9UJcwmy2UHuhwj_g"}
+    valid_data = VerifyJSONWebTokenSerializer().validate(data)
+    user = valid_data['user']
+    return HttpResponse(str(user))

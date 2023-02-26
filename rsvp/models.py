@@ -1,12 +1,19 @@
 from django.db import models
 import uuid
+# from registry.models import Fund
 
 # Create your models here.
+
+
+def next_id():
+    return Invite.objects.latest('pseudo_id').pseudo_id + 1
 
 
 class Invite(models.Model):
     family_name = models.CharField(max_length=200)
     uuid = models.UUIDField(primary_key=True, editable=False, unique=True)
+    pseudo_id = models.IntegerField(
+        unique=True, default=next_id)
     invite_url = models.URLField(verbose_name="Unique RSVP Link")
     email = models.EmailField(verbose_name="Email Address")
     finished = models.BooleanField(

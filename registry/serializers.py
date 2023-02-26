@@ -1,13 +1,21 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
-from .models import Registry, RegistryItem
+from .models import Registry, RegistryItem, Fund, Invite
+
+
+class ClaimerIDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invite
+        fields = ['pseudo_id']
 
 
 class RegistryItemSerializer(serializers.ModelSerializer):
+    claimer = ClaimerIDSerializer()
+
     class Meta:
         model = RegistryItem
-        fields = ['name', 'url', 'id', 'price', 'claimer_id']
+        fields = ['name', 'url', 'id', 'price', 'claimer']
 
 
 class RegistrySerializer(serializers.HyperlinkedModelSerializer):
@@ -16,3 +24,10 @@ class RegistrySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Registry
         fields = ('name', 'registry_items',)
+
+
+class FundSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fund
+        fields = ['id', 'name', 'total_amount_raised',
+                  'goal', 'background_photo']
