@@ -6,7 +6,10 @@ import uuid
 
 
 def next_id():
-    return Invite.objects.latest('pseudo_id').pseudo_id + 1
+    try:
+        return Invite.objects.latest('pseudo_id').pseudo_id + 1
+    except:
+        return 1
 
 
 class Invite(models.Model):
