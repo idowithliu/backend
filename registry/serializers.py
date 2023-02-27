@@ -15,7 +15,7 @@ class RegistryItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RegistryItem
-        fields = ['name', 'url', 'id', 'price', 'claimer']
+        fields = ['name', 'url', 'photo_url', 'id', 'price', 'claimer']
 
 
 class RegistrySerializer(serializers.HyperlinkedModelSerializer):

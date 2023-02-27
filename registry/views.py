@@ -7,7 +7,7 @@ import json
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, mixins
 from registry.serializers import RegistrySerializer, FundSerializer
-from .models import Registry, RegistryItem, Fund
+from .models import Registry, RegistryItem, Fund, FundContrib
 from rsvp.models import Invite, Guest
 
 
@@ -49,7 +49,7 @@ def claim(request):
     new_claimer = Invite.objects.filter(uuid=body['uuid']).first()
     if not new_claimer:
         response = {"status": "error",
-                    "message": f"a guest with ID {body['claimer_id']} was not found"}
+                    "message": f"an invite with ID {body['claimer_id']} was not found"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=404)
 
     if (not registry_item.claimer_id is None) and new_claimer.invite.uuid != body['uuid']:
@@ -64,16 +64,86 @@ def claim(request):
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)
 
 
-def funds_progress(request):
-    if request.method != "GET":
+@csrf_exempt
+def get_contribution_amount(request):
+    if request.method != "POST":
         response = {"status": "error", "message": "Method not allowed"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=405)
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    if not "uuid" in body or not body['uuid']:
+        response = {"status": "error",
+                    "message": "an invite UUID was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+    invite = Invite.objects.filter(uuid=body['uuid']).first()
+    if not invite:
+        response = {"status": "error",
+                    "message": f"an invite with ID {body['claimer_id']} was not found"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=404)
+    if not "id" in body or not body['id']:
+        response = {"status": "error",
+                    "message": "a fund ID was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+    fund = Fund.objects.filter(id=body['id']).first()
+    if not fund:
+        response = {"status": "error",
+                    "message": "a fund with this ID was not found"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=404)
 
-    total = 0
-    for invite in Invite.objects.all():
-        if hasattr(invite, "funds"):
-            total += invite.funds.amount
+    existing = FundContrib.objects.filter(
+        contributer=invite, fund=fund).first()
+    amount = existing.amount if existing else 0
 
     response = {"status": "ok",
-                "total": total}
+                "amount": amount}
+    return HttpResponse(json.dumps(response), content_type="application/json", status=200)
+
+
+@csrf_exempt
+def contribute(request):
+    if request.method != "POST":
+        response = {"status": "error", "message": "Method not allowed"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=405)
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    if not "uuid" in body or not body['uuid']:
+        response = {"status": "error",
+                    "message": "an invite UUID was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+    invite = Invite.objects.filter(uuid=body['uuid']).first()
+    if not invite:
+        response = {"status": "error",
+                    "message": "an invite with this UUID was not found"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=404)
+    if not "id" in body or not body['id']:
+        response = {"status": "error",
+                    "message": "a fund ID was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+    if not "amount" in body or not body['amount']:
+        response = {"status": "error",
+                    "message": "a contribution amount was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+    if body['amount'] <= 0:
+        response = {"status": "error",
+                    "message": "the contribution amount must be positive"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+    fund = Fund.objects.filter(id=body['id']).first()
+    if not fund:
+        response = {"status": "error",
+                    "message": "a fund with this ID was not found"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=404)
+
+    existing = FundContrib.objects.filter(
+        contributer=invite, fund=fund).first()
+    if existing:
+        response = {"status": "error",
+                    "message": "you have already contributed to this fund!"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    new_contribution = FundContrib(
+        contributer=invite, fund=fund, amount=body['amount'])
+    new_contribution.save()
+
+    response = {"status": "ok",
+                "message": "Thanks for your donation!"}
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)

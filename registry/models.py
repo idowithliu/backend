@@ -24,6 +24,7 @@ class RegistryItem(models.Model):
     name = models.CharField(max_length=200)
     id = models.AutoField(primary_key=True, unique=True)
     url = models.URLField(verbose_name="Link to Purchasing Site")
+    photo_url = models.URLField(verbose_name="Photo URL")
 
     price = models.IntegerField(blank=True, null=True)
 
@@ -65,4 +66,5 @@ class FundContrib(models.Model):
         return f"from {self.contributer.family_name} to {self.fund.name}"
 
     class Meta:
-        verbose_name = "Fund Contributions"
+        verbose_name = "Fund Contribution"
+        verbose_name_plural = "Fund Contributions"
