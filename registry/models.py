@@ -1,5 +1,6 @@
 from django.db import models
 from rsvp.models import Guest, Invite
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -61,9 +62,21 @@ class FundContrib(models.Model):
     fund = models.ForeignKey(
         Fund, on_delete=models.CASCADE, related_name="contributions")
     amount = models.IntegerField(verbose_name="Contribution Amount")
+    is_cleaned = False
 
     def __str__(self):
         return f"from {self.contributer.family_name} to {self.fund.name}"
+
+    def clean(self):
+        self.is_cleaned = True
+        if self.amount <= 0:
+            raise ValidationError("Contribution amount must be positive")
+        super(FundContrib, self).clean()
+
+    def save(self, *args, **kwargs):
+        if not self.is_cleaned:
+            self.full_clean()
+        super(FundContrib, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Fund Contribution"
