@@ -125,7 +125,7 @@ def contribute(request):
         return HttpResponse(json.dumps(response), content_type="application/json", status=400)
     if body['amount'] <= 0:
         response = {"status": "error",
-                    "message": "the contribution amount must be positive"}
+                    "message": "please enter a positive contribution amount"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=400)
     fund = Fund.objects.filter(id=body['id']).first()
     if not fund:
