@@ -78,7 +78,7 @@ def get_contribution_amount(request):
     invite = Invite.objects.filter(uuid=body['uuid']).first()
     if not invite:
         response = {"status": "error",
-                    "message": f"an invite with ID {body['claimer_id']} was not found"}
+                    "message": f"an invite with ID {body['uuid']} was not found"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=404)
     if not "id" in body or not body['id']:
         response = {"status": "error",
@@ -135,7 +135,7 @@ def contribute(request):
 
     existing = FundContrib.objects.filter(
         contributer=invite, fund=fund).first()
-    if existing:
+    if existing and existing.amount > 0:
         response = {"status": "error",
                     "message": "you have already contributed to this fund!"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=400)
