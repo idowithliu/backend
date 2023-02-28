@@ -47,6 +47,9 @@ class Fund(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f"/registry"
+
     @property
     def total_amount_raised(self) -> int:
         total_raised = 0

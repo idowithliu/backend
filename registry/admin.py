@@ -16,6 +16,7 @@ class RegistryAdmin(admin.ModelAdmin):
 class FundAdmin(admin.ModelAdmin):
     inlines = []
     list_display = ('name', 'total_amount_raised',)
+    view_on_site = True
 
     def total_amount_raised(self, obj: Fund):
         return f"${obj.total_amount_raised}"
