@@ -34,6 +34,12 @@ class Invite(models.Model):
     def get_absolute_url(self):
         return f"/rsvp?userID={self.uuid}"
 
+class Email(models.Model):
+    address = models.EmailField(verbose_name="Email Address")
+    invite = models.ForeignKey(Invite, related_name="emails", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.address
 
 class Guest(models.Model):
     invite = models.ForeignKey(
