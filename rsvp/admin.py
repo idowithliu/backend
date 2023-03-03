@@ -24,7 +24,7 @@ class FundContribInline(admin.TabularInline):
 
 class InviteAdmin(admin.ModelAdmin):
     inlines = [EmailInline, GuestInline, FundContribInline]
-    list_display = ("family_name", "finished", "invite_url", "email",)
+    list_display = ("family_name", "finished", "invite_url",)
     exclude = ("invite_url", "finished", 'pseudo_id',)
     view_on_site = True
 

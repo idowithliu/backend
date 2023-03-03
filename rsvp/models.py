@@ -18,7 +18,6 @@ class Invite(models.Model):
     pseudo_id = models.IntegerField(
         unique=True, default=next_id)
     invite_url = models.URLField(verbose_name="Unique RSVP Link")
-    email = models.EmailField(verbose_name="Email Address")
     finished = models.BooleanField(
         verbose_name="Has Completed RSVP", default=False)
 
