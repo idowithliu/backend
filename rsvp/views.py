@@ -19,7 +19,7 @@ import json
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, mixins
 from rsvp.serializers import InviteSerializer
-from .models import Invite, Guest
+from .models import Invite, Guest, Email
 
 
 class InviteViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -119,17 +119,17 @@ def send_emails(request):
 
     all_emails = "all_emails" in body and body['all_emails'] == True
 
-    invites = Invite.objects.all()
+    emails = Email.objects.all()
     if not all_emails:
-        invites = invites.filter(finished=False)
+        emails = emails.filter(invite__finished=False)
 
     client = EmailClient()
-    for invite in invites:
+    for email in emails:
         client.send_email(
-            invite.email, body['subject'], content.format(**invite.__dict__))
+            email.address, body['subject'], content.format(**email.invite.__dict__))
 
     response = {"status": "ok",
-                "message": f"Successfully sent {invites.__len__()} emails!"}
+                "message": f"Successfully sent {emails.__len__()} emails!"}
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)
 
 
@@ -177,15 +177,15 @@ def test_email(request):
     content: str = body['email_content']
 
     client = EmailClient()
-    invite = Invite.objects.first()
+    email = Email.objects.first()
 
-    if not invite:
+    if not email:
         response = {"status": "error",
-                    "message": "there are no invitations in the database yet"}
+                    "message": "there are no emails in the database yet"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=404)
 
     client.send_email(
-        client.sender, body['subject'], content.format(**invite.__dict__))
+        client.sender, body['subject'], content.format(**email.invite.__dict__))
 
     response = {"status": "ok",
                 "message": f"Successfully sent test email!"}
