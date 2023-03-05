@@ -2,7 +2,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-#from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
+# from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 
 from .emails.main import EmailClient
 from django.shortcuts import render
@@ -192,8 +192,43 @@ def test_email(request):
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)
 
 
-def test(request):
-    data = {'token': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1NjE5Njc2LCJpYXQiOjE2NzU2MTkzNzYsImp0aSI6ImVmNWM1NjdhZjMzNzQ4OTM4YWZmNTA1Nzg4ZDczMjE3IiwidXNlcl9pZCI6MX0.Q-ThCR6lBAegbkD-bbzJMakqENA9UJcwmy2UHuhwj_g"}
-    valid_data = VerifyJSONWebTokenSerializer().validate(data)
-    user = valid_data['user']
-    return HttpResponse(str(user))
+@csrf_exempt
+def dry_run(request):
+    if request.method != "POST":
+        response = {"status": "error", "message": "Method not allowed"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=405)
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    if not "username" in body or not "password" in body:
+        response = {"status": "error",
+                    "message": "Username or password was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    user = User.objects.filter(username=body['username']).first()
+
+    if not user:
+        response = {"status": "error",
+                    "message": "a user with this username was not found"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=404)
+
+    if not user.check_password(body['password']):
+        response = {"status": "error",
+                    "message": "the password provided was not correct"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=401)
+
+    if not user.has_perms(["superuser"]):
+        response = {"status": "error",
+                    "message": "the user does not have superuser permissions"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=401)
+
+    all_emails = "all_emails" in body and body['all_emails'] == True
+
+    emails = Email.objects.all()
+    if not all_emails:
+        emails = emails.filter(invite__finished=False)
+
+    response = {"status": "ok",
+                "message": f"Fetched {emails.__len__()} emails!", "emails": [{"address": email.address, "family_name": email.invite.family_name} for email in emails]}
+    return HttpResponse(json.dumps(response), content_type="application/json", status=200)
