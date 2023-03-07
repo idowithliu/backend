@@ -68,7 +68,7 @@ class Info(models.Model):
     def total_rsvp(self) -> int:
         return Guest.objects.filter(invite__finished=True).__len__()
 
-    total_rsvp.fget.short_description = "Total guests who completed RSVP'd"
+    total_rsvp.fget.short_description = "Total guests who completed RSVP"
 
     @property
     def total_invited(self) -> int:
