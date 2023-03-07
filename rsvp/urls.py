@@ -12,5 +12,6 @@ urlpatterns = [
     path('send-emails/', views.send_emails),
     path('test-email/', views.test_email),
     path('dry-run/', views.dry_run),
+    path('send-specific/', views.send_specific),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

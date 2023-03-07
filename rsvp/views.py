@@ -134,6 +134,69 @@ def send_emails(request):
 
 
 @csrf_exempt
+def send_specific(request):
+    if request.method != "POST":
+        response = {"status": "error", "message": "Method not allowed"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=405)
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    if not "username" in body or not "password" in body:
+        response = {"status": "error",
+                    "message": "Username or password was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    user = User.objects.filter(username=body['username']).first()
+
+    if not user:
+        response = {"status": "error",
+                    "message": "a user with this username was not found"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=404)
+
+    if not user.check_password(body['password']):
+        response = {"status": "error",
+                    "message": "the password provided was not correct"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=401)
+
+    if not user.has_perms(["superuser"]):
+        response = {"status": "error",
+                    "message": "the user does not have superuser permissions"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=401)
+
+    if not "email_content" in body:
+        response = {"status": "error",
+                    "message": "an email body was not provided as \"email_content\""}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    if not "subject" in body:
+        response = {"status": "error",
+                    "message": "an email subject was not provided as \"subject\""}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    if not "rowSelection" in body:
+        response = {"status": "error",
+                    "message": "a row selection array was not provided"}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=400)
+
+    content: str = body['email_content']
+
+    all_emails = "all_emails" in body and body['all_emails'] == True
+
+    emails = [Email.objects.filter(id=_id).first()
+              for _id in body['rowSelection']]
+
+    client = EmailClient()
+    for email in emails:
+        client.send_email(
+            email.address, body['subject'], content.format(**email.invite.__dict__))
+
+    response = {"status": "ok",
+                "message": f"Successfully sent {emails.__len__()} emails!"}
+    return HttpResponse(json.dumps(response), content_type="application/json", status=200)
+
+
+@csrf_exempt
 def test_email(request):
     if request.method != "POST":
         response = {"status": "error", "message": "Method not allowed"}
@@ -230,5 +293,5 @@ def dry_run(request):
         emails = emails.filter(invite__finished=False)
 
     response = {"status": "ok",
-                "message": f"Fetched {emails.__len__()} emails!", "emails": [{"address": email.address, "family_name": email.invite.family_name} for email in emails]}
+                "message": f"Fetched {emails.__len__()} emails!", "emails": [{"id": email.id, "address": email.address, "family_name": email.invite.family_name} for email in emails]}
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)
