@@ -60,7 +60,7 @@ def claim(request):
     registry_item.claimer = new_claimer
     registry_item.save()
     response = {"status": "ok",
-                "message": "the registry item was successfully claimed!"}
+                "message": "Thanks for claiming the registry item!"}
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)
 
 
