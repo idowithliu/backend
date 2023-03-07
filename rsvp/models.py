@@ -33,12 +33,15 @@ class Invite(models.Model):
     def get_absolute_url(self):
         return f"/rsvp?userID={self.uuid}"
 
+
 class Email(models.Model):
     address = models.EmailField(verbose_name="Email Address")
-    invite = models.ForeignKey(Invite, related_name="emails", on_delete=models.CASCADE)
+    invite = models.ForeignKey(
+        Invite, related_name="emails", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.address
+
 
 class Guest(models.Model):
     invite = models.ForeignKey(
@@ -52,3 +55,26 @@ class Guest(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Info(models.Model):
+    @property
+    def total_rsvp_yes(self) -> int:
+        return Guest.objects.filter(is_attending=True).__len__()
+
+    total_rsvp_yes.fget.short_description = "Total guests who RSVP'd \"Yes\""
+
+    @property
+    def total_rsvp(self) -> int:
+        return Guest.objects.filter(invite__finished=True).__len__()
+
+    total_rsvp.fget.short_description = "Total guests who completed RSVP'd"
+
+    @property
+    def total_invited(self) -> int:
+        return Guest.objects.all().__len__()
+
+    total_invited.fget.short_description = "Total guests who were invited"
+
+    class Meta:
+        verbose_name_plural = "Guest Summary"

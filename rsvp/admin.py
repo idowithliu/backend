@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Invite, Guest, Email
+from .models import Invite, Guest, Email, Info
 from registry.models import FundContrib
 # from registry.models import Fund
 
@@ -8,9 +8,11 @@ class GuestInline(admin.TabularInline):
     model = Guest
     fields = ('name', 'dietary_restrictions', 'is_attending',)
 
+
 class EmailInline(admin.TabularInline):
     model = Email
     fields = ('address',)
+
 
 class FundContribInline(admin.TabularInline):
     model = FundContrib
@@ -29,5 +31,11 @@ class InviteAdmin(admin.ModelAdmin):
     view_on_site = True
 
 
+class InfoAdmin(admin.ModelAdmin):
+    inlines = []
+    list_display = ('total_rsvp_yes', 'total_rsvp', 'total_invited',)
+
+
 # Register your models here.
 admin.site.register(Invite, InviteAdmin)
+admin.site.register(Info, InfoAdmin)
