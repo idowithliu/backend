@@ -33,6 +33,10 @@ class Invite(models.Model):
     def get_absolute_url(self):
         return f"/rsvp?userID={self.uuid}"
 
+    @property
+    def number_of_guests(self) -> int:
+        return Guest.objects.filter(invite__uuid=self.uuid).__len__()
+
 
 class Email(models.Model):
     address = models.EmailField(verbose_name="Email Address")
