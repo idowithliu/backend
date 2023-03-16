@@ -57,6 +57,10 @@ class Guest(models.Model):
     is_attending = models.BooleanField(
         verbose_name="Is Attending", null=True, blank=True)
 
+    @property
+    def family_name(self):
+        return self.invite
+
     def __str__(self):
         return self.name
 
