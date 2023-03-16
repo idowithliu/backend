@@ -60,6 +60,9 @@ class Guest(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f"/rsvp?userID={self.invite.uuid}"
+
 
 class Info(models.Model):
     @property
