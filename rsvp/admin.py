@@ -32,6 +32,11 @@ class InviteAdmin(admin.ModelAdmin):
     view_on_site = True
 
 
+class GuestAdmin(admin.ModelAdmin):
+    inlines = []
+    list_display = ("name", "is_attending",)
+
+
 class InfoAdmin(admin.ModelAdmin):
     inlines = []
     list_display = ('total_rsvp_yes', 'total_rsvp', 'total_invited',)
@@ -40,3 +45,4 @@ class InfoAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Invite, InviteAdmin)
 admin.site.register(Info, InfoAdmin)
+admin.site.register(Guest, GuestAdmin)
