@@ -56,6 +56,7 @@ class Guest(models.Model):
         null=True, blank=True, max_length=200)
     is_attending = models.BooleanField(
         verbose_name="Is Attending", null=True, blank=True)
+    is_child = models.BooleanField(verbose_name="Is a child")
 
     @property
     def family_name(self):

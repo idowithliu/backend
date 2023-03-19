@@ -34,7 +34,7 @@ class InviteAdmin(admin.ModelAdmin):
 
 class GuestAdmin(admin.ModelAdmin):
     inlines = []
-    list_display = ("name", "is_attending", "family_name",)
+    list_display = ("name", "is_attending", "is_child", "family_name",)
     view_on_site = True
 
 
