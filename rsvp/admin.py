@@ -6,7 +6,7 @@ from registry.models import FundContrib
 
 class GuestInline(admin.TabularInline):
     model = Guest
-    fields = ('name', 'dietary_restrictions', 'is_attending',)
+    fields = ('name', 'dietary_restrictions', 'is_attending', 'is_child',)
 
 
 class EmailInline(admin.TabularInline):

@@ -188,8 +188,17 @@ def send_specific(request):
 
     client = EmailClient()
     for email in emails:
+        guests = [guest for guest in Guest.objects.filter(
+            invite=email.invite, is_child=False)]
+        if len(guests) == 1:
+            guest_names = f"{guests[0].name}"
+        elif len(guests) == 2:
+            guest_names = f"{guests[0]} and {guests[1]}"
+        else:
+            guest_names = f"{', '.join([guest.name for guest in guests[:-1]])}, and {guests[-1].name}"
+
         client.send_email(
-            email.address, body['subject'], content.format(**email.invite.__dict__))
+            email.address, body['subject'], content.format(**email.invite.__dict__, guest_names=guest_names))
 
     response = {"status": "ok",
                 "message": f"Successfully sent {emails.__len__()} emails!"}
