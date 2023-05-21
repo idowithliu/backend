@@ -340,6 +340,8 @@ def generate_xlsx_spreadsheet(request):
 
     # Analytics
     data.append([])
+    data.append([])
+    data.append([])
     data.append(["Number of people confirmed attending:",
                 Guest.objects.filter(is_attending=True).__len__()])
     data.append(["Number of people confirmed NOT attending:",
@@ -362,7 +364,7 @@ def generate_xlsx_spreadsheet(request):
     #         ws, min=col, max=col, width=20)
 
     dim_holder['A'] = ColumnDimension(ws, min=1, max=1, width=43)
-    dim_holder['B'] = ColumnDimension(ws, min=2, max=2, width=31)
+    dim_holder['B'] = ColumnDimension(ws, min=2, max=2, width=43)
     dim_holder['C'] = ColumnDimension(ws, min=3, max=3, width=20)
     dim_holder['D'] = ColumnDimension(ws, min=4, max=4, width=100)
     ws.column_dimensions = dim_holder
