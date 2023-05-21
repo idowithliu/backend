@@ -2,7 +2,8 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-# from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Permission
 
 from .emails.main import EmailClient
 from django.shortcuts import render
@@ -11,10 +12,15 @@ from django.core.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
 
-# from rest_framework.authentication.BaseAuthentication import authenticate
-# from authentication_django_rest_framework.apps.core.api.authentication.authentications import JWTAccessTokenAuthentication
-# from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 import json
+
+# Spreadsheets
+from functools import cmp_to_key
+from openpyxl import Workbook
+from openpyxl.styles import Font
+from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
+
 
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, mixins
@@ -304,3 +310,76 @@ def dry_run(request):
     response = {"status": "ok",
                 "message": f"Fetched {emails.__len__()} emails!", "emails": [{"id": email.id, "address": email.address, "family_name": email.invite.family_name} for email in emails]}
     return HttpResponse(json.dumps(response), content_type="application/json", status=200)
+
+
+@login_required
+def generate_xlsx_spreadsheet(request):
+    filename = "melanie_andrew_wedding_rsvp.xlsx"
+
+    def guest_sorter(guest_1: Guest, guest_2: Guest):
+        if guest_1.invite.finished != guest_2.invite.finished:
+            return guest_2.invite.finished - guest_1.invite.finished
+        if guest_1.is_attending != guest_2.is_attending:
+            return guest_2.is_attending - guest_1.is_attending
+        return int(guest_1.invite.family_name < guest_2.invite.family_name)
+
+    guests = [_ for _ in Guest.objects.all()]
+    guests.sort(key=cmp_to_key(guest_sorter))
+
+    """
+    Generate Excel spreadsheet
+    """
+    # Header
+    data = [["GUEST NAME", "FAMILY NAME",
+             "IS ATTENDING?", "DIETARY RESTRICTIONS"]]
+
+    # Raw Data
+    for guest in guests:
+        data.append([guest.name, guest.invite.family_name,
+                    "Yes" if guest.is_attending else "No", guest.dietary_restrictions])
+
+    # Analytics
+    data.append([])
+    data.append(["Number of people confirmed attending:",
+                Guest.objects.filter(is_attending=True).__len__()])
+    data.append(["Number of people confirmed NOT attending:",
+                Guest.objects.filter(is_attending=False).__len__()])
+    data.append(["Total guests who completed RSVP:",
+                Guest.objects.filter(invite__finished=True).__len__()])
+    data.append(["Total guests invited:", Guest.objects.all().__len__()])
+
+    wb = Workbook()
+    ws = wb.active
+
+    for row in data:
+        ws.append(row)
+
+    dim_holder = DimensionHolder(worksheet=ws)
+
+    # https://stackoverflow.com/questions/13197574/openpyxl-adjust-column-width-size
+    # for col in range(ws.min_column, ws.max_column + 1):
+    #     dim_holder[get_column_letter(col)] = ColumnDimension(
+    #         ws, min=col, max=col, width=20)
+
+    dim_holder['A'] = ColumnDimension(ws, min=1, max=1, width=42)
+    dim_holder['B'] = ColumnDimension(ws, min=2, max=2, width=20)
+    dim_holder['C'] = ColumnDimension(ws, min=3, max=3, width=20)
+    dim_holder['D'] = ColumnDimension(ws, min=4, max=4, width=80)
+    ws.column_dimensions = dim_holder
+
+    ft = Font(bold=True)
+    for row in ws['A1:D1']:
+        for cell in row:
+            cell.font = ft
+
+    wb.save(filename)
+
+    # Return it to the user
+    with open(filename, 'rb') as f:
+        file_data = f.read()
+
+    response = HttpResponse(
+        file_data, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="melanie_andrew_wedding_rsvp.xlsx"'
+
+    return response

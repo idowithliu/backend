@@ -29,6 +29,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = '/admin/login/'
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
