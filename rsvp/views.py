@@ -352,6 +352,7 @@ def generate_xlsx_spreadsheet(request):
 
     wb = Workbook()
     ws = wb.active
+    ws.title = "Guest List"
 
     for row in data:
         ws.append(row)
