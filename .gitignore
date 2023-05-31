@@ -3,3 +3,4 @@ venv/
 *.pyc
 core/config.py
 *.xlsx
+.vscode/

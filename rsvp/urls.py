@@ -14,5 +14,6 @@ urlpatterns = [
     path('dry-run/', views.dry_run),
     path('send-specific/', views.send_specific),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('export/', views.generate_xlsx_spreadsheet)
+    path('export/', views.generate_xlsx_spreadsheet),
+    path('rsvp-deadline/', views.rsvp_deadline),
 ]

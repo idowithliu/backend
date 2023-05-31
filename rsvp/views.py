@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.core.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
+from django.conf import settings
 
 import json
 
@@ -335,8 +336,8 @@ def generate_xlsx_spreadsheet(request):
 
     # Raw Data
     for guest in guests:
-        data.append([guest.name, guest.invite.family_name,
-                    "Yes" if guest.is_attending else "No", guest.dietary_restrictions])
+        data.append([guest.name, guest.invite.family_name, ("Yes" if guest.is_attending else "No",
+                    guest.dietary_restrictions) if guest.invite.finished else "Incomplete RSVP"])
 
     # Analytics
     data.append([])
@@ -386,3 +387,7 @@ def generate_xlsx_spreadsheet(request):
     response['Content-Disposition'] = 'attachment; filename="melanie_andrew_wedding_rsvp.xlsx"'
 
     return response
+
+def rsvp_deadline(request):
+    response = {"status": "ok", "deadline": settings.RSVP_DEADLINE.isoformat()}
+    return HttpResponse(json.dumps(response), content_type="application/json", status=200)
