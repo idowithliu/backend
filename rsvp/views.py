@@ -14,6 +14,7 @@ from django.contrib.auth.hashers import check_password
 from django.conf import settings
 
 import json
+import datetime
 
 # Spreadsheets
 from functools import cmp_to_key
@@ -39,6 +40,12 @@ def submit_rsvp(request):
     if request.method != "POST":
         response = {"status": "error", "message": "Method not allowed"}
         return HttpResponse(json.dumps(response), content_type="application/json", status=405)
+    
+    # Past deadline
+    if datetime.datetime.now() > settings.RSVP_DEADLINE:
+        response = {"status": "error", "message": "Sorry, the deadline to RSVP has passed."}
+        return HttpResponse(json.dumps(response), content_type="application/json", status=401)
+    
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     if not "uuid" in body or not body['uuid']:
