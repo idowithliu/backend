@@ -336,8 +336,7 @@ def generate_xlsx_spreadsheet(request):
 
     # Raw Data
     for guest in guests:
-        data.append([guest.name, guest.invite.family_name, ("Yes" if guest.is_attending else "No",
-                    guest.dietary_restrictions) if guest.invite.finished else "Incomplete RSVP"])
+        data.append([guest.name, guest.invite.family_name, ("Yes" if guest.is_attending else "No") if guest.invite.finished else "Incomplete RSVP", guest.dietary_restrictions])
 
     # Analytics
     data.append([])
