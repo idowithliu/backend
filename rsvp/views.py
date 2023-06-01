@@ -325,10 +325,8 @@ def dry_run(request):
 def generate_xlsx_spreadsheet(request):
     tz = pytz.timezone(settings.TIME_ZONE)
     current_time = tz.localize(datetime.datetime.now())
-    dst = current_time.dst()
-    adjusted_time = current_time + dst
 
-    filename = f"melanie_andrew_wedding_rsvp_{adjusted_time.isoformat()}.xlsx"
+    filename = f"melanie_andrew_wedding_rsvp_{current_time.isoformat()}.xlsx"
 
     def guest_sorter(guest_1: Guest, guest_2: Guest):
         if guest_1.invite.finished != guest_2.invite.finished:
