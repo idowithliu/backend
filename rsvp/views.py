@@ -15,6 +15,7 @@ from django.conf import settings
 
 import json
 import datetime
+import pytz
 
 # Spreadsheets
 from functools import cmp_to_key
@@ -322,7 +323,12 @@ def dry_run(request):
 
 @login_required
 def generate_xlsx_spreadsheet(request):
-    filename = "melanie_andrew_wedding_rsvp.xlsx"
+    tz = pytz.timezone(settings.TIME_ZONE)
+    current_time = tz.localize(datetime.datetime.now())
+    dst = current_time.dst()
+    adjusted_time = current_time + dst
+
+    filename = f"melanie_andrew_wedding_rsvp_{adjusted_time.isoformat()}.xlsx"
 
     def guest_sorter(guest_1: Guest, guest_2: Guest):
         if guest_1.invite.finished != guest_2.invite.finished:
@@ -390,7 +396,7 @@ def generate_xlsx_spreadsheet(request):
 
     response = HttpResponse(
         file_data, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="melanie_andrew_wedding_rsvp.xlsx"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     return response
 
