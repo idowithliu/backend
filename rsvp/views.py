@@ -43,7 +43,8 @@ def submit_rsvp(request):
         return HttpResponse(json.dumps(response), content_type="application/json", status=405)
     
     # Past deadline
-    if datetime.datetime.now() > settings.RSVP_DEADLINE:
+    tz = pytz.timezone(settings.TIME_ZONE)
+    if tz.localize(datetime.datetime.now()) > settings.RSVP_DEADLINE:
         response = {"status": "error", "message": "Sorry, the deadline to RSVP has passed."}
         return HttpResponse(json.dumps(response), content_type="application/json", status=401)
     
