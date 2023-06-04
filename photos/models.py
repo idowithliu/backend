@@ -18,4 +18,4 @@ class Photo(models.Model):
     image = models.ImageField(verbose_name="Image Data", upload_to=unique_filename(settings.MEDIA_ROOT))
 
     def __str__(self):
-        return self.image.name
+        return f"#{self.id}: {self.image.name}"
