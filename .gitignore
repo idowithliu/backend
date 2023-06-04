@@ -4,3 +4,4 @@ venv/
 core/config.py
 *.xlsx
 .vscode/
+media/

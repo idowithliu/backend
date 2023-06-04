@@ -79,7 +79,6 @@ def submit_rsvp(request):
                         "message": f"the guest with ID {guest['id']} was not found."}
             return HttpResponse(json.dumps(response), content_type="application/json", status=404)
         guest_obj.is_attending = guest['is_attending']
-        print(guest["is_attending"])
         guest_obj.dietary_restrictions = guest['dietary_restrictions'] if guest_obj.is_attending else ""
         guest_obj.save()
 
@@ -327,7 +326,7 @@ def generate_xlsx_spreadsheet(request):
     tz = pytz.timezone(settings.TIME_ZONE)
     current_time = tz.localize(datetime.datetime.now())
 
-    filename = f"melanie_andrew_wedding_rsvp_{current_time.isoformat()}.xlsx"
+    filename = f"exports/melanie_andrew_wedding_rsvp_{current_time.isoformat()}.xlsx"
 
     def guest_sorter(guest_1: Guest, guest_2: Guest):
         if guest_1.invite.finished != guest_2.invite.finished:

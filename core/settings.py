@@ -33,6 +33,10 @@ ALLOWED_HOSTS = []
 
 LOGIN_URL = "/admin/login/"
 
+# Media settings
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
@@ -57,6 +61,8 @@ INSTALLED_APPS = [
     "discord_integration",
     "registry.apps.RegistryConfig",
     "rsvp.apps.RsvpConfig",
+    "photos.apps.PhotosConfig",
+
     "django.contrib.admin",
     "django.contrib.sites",
     "django.contrib.auth",
