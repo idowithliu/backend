@@ -1,5 +1,8 @@
 FROM python:3.8-slim@sha256:10e07e36f86af4371accc42642852aa60eab74e6896fc065345ebc2c576eec0d
 
+LABEL org.opencontainers.image.authors="Jimmy Liu <contact@jimmyliu.dev>"
+LABEL org.opencontainers.image.source="https://github.com/idowithliu/backend"
+
 # Copy files
 WORKDIR /app
 COPY . /app

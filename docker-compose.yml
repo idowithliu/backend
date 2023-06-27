@@ -1,13 +1,10 @@
 services:
   postgres:
     image: postgres
-    container_name: postgres
     environment:
       POSTGRES_PASSWORD: "idowithliu_postgres_password"
       POSTGRES_USER: "idowithliu_postgres_user"
       POSTGRES_DB: "idowithliu"
-    # volumes:
-    #   - ${PWD}/postgres-init-db.sh:/docker-entrypoint-initdb.d/postgres-init-db.sh
     networks:
       - postgres
     healthcheck:
@@ -18,7 +15,6 @@ services:
     build: .
     image: idowithliu-backend
     command: gunicorn core.wsgi -b 0.0.0.0:8000
-    # entrypoint: bash
     ports:
       - "0.0.0.0:8000:8000"
     depends_on:
