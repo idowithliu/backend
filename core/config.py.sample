@@ -6,6 +6,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# If using Docker Compose, comment out to use postgres
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",

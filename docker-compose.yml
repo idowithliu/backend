@@ -32,7 +32,7 @@ services:
     image: caddy:2.6.4-alpine
     restart: unless-stopped
     ports:
-      - "37890:37890"
+      - "37891:37891"
       - "80:80"
       - "443:443"
       - "443:443/udp"
