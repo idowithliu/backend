@@ -1,0 +1,28 @@
+# Clone this file into 'config.py' and update to suit your needs
+
+import datetime
+import pytz
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+SECRET_KEY = "Change me"
+
+CSRF_TRUSTED_ORIGINS = []
+
+DEBUG = True
+
+EMAIL_INFO = {
+    "sender": "",
+    "password": ""
+}
+
+timezone = pytz.timezone("America/Toronto")
+RSVP_DEADLINE=timezone.localize(datetime.datetime.max)

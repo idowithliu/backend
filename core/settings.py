@@ -186,6 +186,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -204,5 +205,5 @@ except ImportError:
 if SECRET_KEY == "Change me":
     raise TypeError("Please override the SECRET_KEY variable to a secure secret key")
 
-if "unchanged" in EMAIL_INFO:
+if "unchanged" in EMAIL_INFO and EMAIL_INFO["unchanged"]:
     raise TypeError("Please update email sending information in core/config.py")

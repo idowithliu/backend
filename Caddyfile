@@ -1,0 +1,24 @@
+localhost:37890 {
+    # Use Django admin backend to handle administrator tasks
+    @backend {
+        path /api*
+        path /admin*
+    }
+    handle @backend {
+        reverse_proxy * gunicorn:27890
+    }
+
+    @file {
+        path /static/*
+        path /media/*
+    }
+    handle @file {
+        root * /srv/idowithliu
+        encode zstd gzip
+        file_server
+    }
+
+    handle {
+        respond "Bad Request" 400
+    }
+}

@@ -9,7 +9,7 @@ DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 MEDIA_ROOT = "/app-media"
 MEDIA_URL = "/media/"
 
-STATIC_ROOT = "/static"
+STATIC_ROOT = "/app-static"
 STATIC_URL = "/static/"
 
 DATABASES = {

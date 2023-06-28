@@ -7,14 +7,12 @@ LABEL org.opencontainers.image.source="https://github.com/idowithliu/backend"
 WORKDIR /app
 COPY . /app
 COPY ./core/docker-settings.py /app/core/config.py
-COPY ./core/config.py /app/core/docker-config.py
 
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y build-essential python3-dev libpq-dev libffi-dev libssl-dev
 RUN python3 -m pip install -r requirements.txt
-# RUN python3 manage.py migrate
 
 # Start worker
-CMD ["python3", "gunicorn", "core.wsgi", "-b", "0.0.0.0:8000"]
+CMD ["gunicorn", "core.wsgi", "-b", "0.0.0.0:8000"]
 EXPOSE 8000

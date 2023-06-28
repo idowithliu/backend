@@ -13,18 +13,37 @@ services:
       timeout: 60s
   gunicorn:
     build: .
-    image: idowithliu-backend
-    command: gunicorn core.wsgi -b 0.0.0.0:8000
+    image: ghcr.io/idowithliu/backend:1.0.0
+    command: gunicorn core.wsgi -b 0.0.0.0:27890
     ports:
-      - "0.0.0.0:8000:8000"
+      - "0.0.0.0:27890:27890"
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - postgres
       - gunicorn
+      - webserver
     volumes:
       - media:/app-media:rw
+      - static:/app-static:rw
+      - ${PWD}/core/config.py:/app/core/docker-config.py:ro
+  webserver:
+    image: caddy:2.6.4-alpine
+    restart: unless-stopped
+    ports:
+      - "37890:37890"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+      - media:/srv/idowithliu/media
+      - static:/srv/idowithliu/static
+    networks:
+      - gunicorn
+    depends_on:
+      - gunicorn
 
 volumes:
   media:
@@ -33,7 +52,14 @@ volumes:
       type: none
       o: bind
       device: '/srv/idowithliu/media'
+  static:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: '/srv/idowithliu/static'
 
 networks:
   gunicorn:
   postgres:
+  webserver:
