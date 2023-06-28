@@ -1,4 +1,8 @@
-localhost:37890 {
+{
+    auto_https off
+}
+
+http://localhost:37890 {
     # Use Django admin backend to handle administrator tasks
     @backend {
         path /api*
