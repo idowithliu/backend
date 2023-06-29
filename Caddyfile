@@ -23,6 +23,6 @@ http://localhost:37891 {
     }
 
     handle {
-        respond "Bad Request" 400
+        respond "Backend does not handle thie route." 400
     }
 }

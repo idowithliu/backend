@@ -12,8 +12,8 @@ services:
       interval: 10s
       timeout: 60s
   gunicorn:
-    build: .
     image: ghcr.io/idowithliu/backend:1.0.0
+    build: .
     command: gunicorn core.wsgi -b 0.0.0.0:27890
     ports:
       - "0.0.0.0:27890:27890"
@@ -33,9 +33,6 @@ services:
     restart: unless-stopped
     ports:
       - "37891:37891"
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
     volumes:
       - $PWD/Caddyfile:/etc/caddy/Caddyfile
       - media:/srv/idowithliu/media
